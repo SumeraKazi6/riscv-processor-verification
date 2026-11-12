@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#10151d">
+  <meta name="description" content="Local dashboard for seeded RISC-V differential verification runs.">
+  <title>RISC-V Verify · Processor Verification Toolkit</title>
+  <link rel="stylesheet" href="/static/css/style.css">
+  <script type="module" src="/static/js/app.js"></script>
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar">
+      <a class="brand" href="#dashboard" aria-label="RISC-V Verify dashboard">
+        <span class="brand-mark">RV</span>
+        <span class="brand-copy"><strong>RISC-V</strong><small>VERIFY TOOLKIT</small></span>
+      </a>
+      <div class="nav-label">WORKSPACE</div>
+      <nav class="side-nav" aria-label="Main navigation">
+        <a href="#dashboard" data-page="dashboard" class="nav-link active"><span class="nav-icon">◫</span>Dashboard</a>
+        <a href="#run" data-page="run" class="nav-link"><span class="nav-icon">▶</span>Run verification</a>
+        <a href="#coverage" data-page="coverage" class="nav-link"><span class="nav-icon">◔</span>Coverage</a>
+        <a href="#results" data-page="results" class="nav-link"><span class="nav-icon">▤</span>Test results</a>
+        <a href="#instructions" data-page="instructions" class="nav-link"><span class="nav-icon">⌘</span>Instruction set</a>
+        <a href="#reports" data-page="reports" class="nav-link"><span class="nav-icon">⇩</span>Reports</a>
+        <a href="#about" data-page="about" class="nav-link"><span class="nav-icon">ⓘ</span>About</a>
+      </nav>
+      <div class="sidebar-bottom">
+        <span class="service-dot" id="service-dot"></span>
+        <span><strong id="service-label">Checking API</strong><small>LOCAL ENGINE</small></span>
+        <span class="sidebar-version">v1.0</span>
+      </div>
+    </aside>
+
+    <div class="main-wrap">
+      <header class="topbar">
+        <button class="mobile-menu" id="mobile-menu" aria-label="Toggle navigation">☰</button>
+        <div class="breadcrumbs"><span>Workspace</span><b>/</b><strong id="current-section">Dashboard</strong></div>
+        <div class="topbar-right"><span class="environment-pill"><i></i> LOCAL ENVIRONMENT</span><button class="icon-button" id="refresh-button" title="Refresh dashboard" aria-label="Refresh dashboard">↻</button></div>
+      </header>
+
+      <main class="content">
+        <section class="page active" id="page-dashboard">
+          <div class="page-heading heading-row">
+            <div><div class="eyebrow">VERIFICATION OVERVIEW</div><h1>Processor verification</h1><p>Monitor seeded differential tests against the RV32I subset reference model.</p></div>
+            <a class="button button-primary" href="#run">＋ <span>New verification run</span></a>
+          </div>
+          <div class="stat-grid">
+            <article class="stat-card"><div class="stat-top"><span>Total tests</span><span class="stat-icon blue">▤</span></div><strong class="stat-value" id="stat-tests">—</strong><small id="stat-tests-note">No run yet</small></article>
+            <article class="stat-card"><div class="stat-top"><span>Passed</span><span class="stat-icon green">✓</span></div><strong class="stat-value" id="stat-passed">—</strong><small class="positive" id="stat-pass-note">Awaiting first run</small></article>
+            <article class="stat-card"><div class="stat-top"><span>Failed</span><span class="stat-icon red">!</span></div><strong class="stat-value" id="stat-failed">—</strong><small id="stat-fail-note">Mismatch count</small></article>
+            <article class="stat-card"><div class="stat-top"><span>Instructions executed</span><span class="stat-icon violet">⌁</span></div><strong class="stat-value" id="stat-instructions">—</strong><small>Architectural steps</small></article>
+            <article class="stat-card"><div class="stat-top"><span>Mnemonic coverage</span><span class="stat-icon amber">◔</span></div><strong class="stat-value" id="stat-coverage">—</strong><small id="stat-coverage-note">Executed at least once</small></article>
+            <article class="stat-card"><div class="stat-top"><span>Pass rate</span><span class="stat-icon teal">%</span></div><strong class="stat-value" id="stat-pass-rate">—</strong><small id="stat-run-time">Run time unavailable</small></article>
+          </div>
+
+          <div class="dashboard-grid">
+            <article class="panel chart-panel">
+              <div class="panel-heading"><div><h2>Run outcome</h2><p>Pass and fail distribution for the latest run</p></div><span class="panel-menu">LATEST RUN</span></div>
+              <div class="donut-layout"><div class="donut" id="outcome-donut"><div><strong id="donut-rate">—</strong><small>pass rate</small></div></div><div class="legend"><div><i class="legend-dot pass"></i><span>Passed</span><strong id="legend-passed">—</strong></div><div><i class="legend-dot fail"></i><span>Failed</span><strong id="legend-failed">—</strong></div><div class="legend-meta"><span>Seed</span><strong id="last-seed">—</strong></div><div class="legend-meta"><span>Completed</span><strong id="last-time">—</strong></div></div></div>
+            </article>
+            <article class="panel chart-panel coverage-summary-panel">
+              <div class="panel-heading"><div><h2>Instruction coverage</h2><p>Supported mnemonics executed at least once</p></div><a class="text-link" href="#coverage">Details ↗</a></div>
+              <div class="coverage-overview"><div class="coverage-ring" id="coverage-ring"><div><strong id="ring-value">—</strong><small>covered</small></div></div><div><strong class="coverage-count" id="coverage-count">— / —</strong><p>instruction mnemonics<br>exercised by this run</p></div></div>
+              <p class="scope-note">Mnemonic coverage is a test metric, not exhaustive processor verification.</p>
+            </article>
+            <article class="panel recent-panel">
+              <div class="panel-heading"><div><h2>Recent test results</h2><p>Latest executed test cases</p></div><a class="text-link" href="#results">View all ↗</a></div>
+              <div class="table-wrap"><table><thead><tr><th>TEST ID</th><th>INSTRUCTIONS</th><th>STATUS</th><th>TIME</th><th></th></tr></thead><tbody id="recent-results"><tr><td colspan="5" class="empty-cell">Run a verification to populate results.</td></tr></tbody></table></div>
+            </article>
+            <article class="panel execution-profile-panel"><div class="panel-heading"><div><h2>Execution profile</h2><p>Executed instruction count for the latest sample tests</p></div><span class="panel-menu">PER TEST</span></div><div class="execution-bars" id="execution-chart"><span class="empty-profile">Run verification to plot executed instructions.</span></div></article>
+          </div>
+        </section>
+
+        <section class="page" id="page-run">
+          <div class="page-heading"><div class="eyebrow">TEST CONFIGURATION</div><h1>Run verification</h1><p>Generate valid instruction programs and compare simulator state with the independent reference model.</p></div>
+          <div class="run-layout">
+            <article class="panel form-panel"><div class="panel-heading"><div><h2>Run parameters</h2><p>Set a reproducible test campaign</p></div><span class="form-index">01 / CONFIGURE</span></div>
+              <form id="run-form" class="form-grid">
+                <label class="field"><span>Number of tests</span><input type="number" name="tests" min="1" max="10000" value="100" required><small>Between 1 and 10,000 generated programs.</small></label>
+                <label class="field"><span>Random seed</span><input type="number" name="seed" min="0" placeholder="Leave blank for generated seed"><small>Reuse a seed and test ID to reproduce a case.</small></label>
+                <label class="field"><span>Minimum program length</span><input type="number" name="min_length" min="1" max="256" value="8" required></label>
+                <label class="field"><span>Maximum program length</span><input type="number" name="max_length" min="1" max="256" value="32" required></label>
+                <label class="field field-toggle"><span><b>Coverage-guided generation</b><small>Increase selection weight for less-executed mnemonics.</small></span><input type="checkbox" name="coverage_guided"><i class="toggle-ui"></i></label>
+                <div class="form-footer"><p>Uses the same engine as <code>python -m riscv_verify run</code>.</p><button class="button button-primary" id="run-submit" type="submit"><span>▶</span> Run verification</button></div>
+              </form>
+            </article>
+            <article class="panel run-state-panel"><div class="panel-heading"><div><h2>Run status</h2><p>Live job status from the API</p></div><span class="status-badge idle" id="run-status">IDLE</span></div>
+              <div class="run-placeholder" id="run-placeholder"><div class="placeholder-mark">⌁</div><strong>Ready to verify</strong><p>Configure a run and start the engine. Progress updates as each program completes.</p></div>
+              <div class="progress-content hidden" id="progress-content"><div class="progress-stats"><div><small>TESTS COMPLETED</small><strong id="progress-count">0 / 0</strong></div><strong id="progress-percent">0%</strong></div><div class="progress-track"><span id="progress-bar"></span></div><p class="run-message" id="run-message">Starting verification…</p><div class="job-meta"><span>Seed</span><strong id="run-seed">—</strong><span>Job ID</span><code id="run-job-id">—</code></div><a href="#results" class="button button-secondary hidden" id="view-run-results">View test results</a></div>
+            </article>
+          </div>
+          <div class="callout"><span>i</span><p>Generated programs use bounded forward control flow. This tool verifies a defined educational RV32I subset and does not claim exhaustive or formal verification.</p></div>
+        </section>
+
+        <section class="page" id="page-coverage">
+          <div class="page-heading heading-row"><div><div class="eyebrow">EXECUTION METRICS</div><h1>Instruction coverage</h1><p>Mnemonic-level execution coverage for the latest verification run.</p></div><span class="metric-chip" id="coverage-run-status">NO RUN DATA</span></div>
+          <article class="panel coverage-banner"><div class="coverage-banner-ring" id="coverage-page-ring"><strong id="coverage-page-percent">—</strong></div><div><div class="eyebrow">INSTRUCTION MNEMONIC COVERAGE</div><h2 id="coverage-page-count">— / — instructions</h2><p>Covered means the instruction executed at least once. This is not exhaustive processor verification.</p></div><div class="banner-total"><small>TOTAL EXECUTIONS</small><strong id="coverage-total-executions">—</strong></div></article>
+          <div class="coverage-cards" id="coverage-cards"><div class="loading-card">Coverage will appear after a run.</div></div>
+          <div class="coverage-lower-grid"><article class="panel"><div class="panel-heading"><div><h2>Coverage by category</h2><p>Distinct mnemonics covered in each instruction group</p></div></div><div id="category-coverage" class="category-list"></div></article><article class="panel"><div class="panel-heading"><div><h2>Memory activity</h2><p>Observed word accesses in executed instructions</p></div></div><div class="memory-metrics" id="memory-coverage"></div></article></div>
+        </section>
+
+        <section class="page" id="page-results">
+          <div class="page-heading heading-row"><div><div class="eyebrow">CAMPAIGN OUTPUT</div><h1>Test results</h1><p>Inspect generated programs and architectural comparison outcomes.</p></div><div class="results-tools"><select id="result-filter" aria-label="Filter results"><option value="all">All results</option><option value="PASS">Passed</option><option value="FAIL">Failed</option></select><button class="button button-secondary" id="results-refresh">↻ Refresh</button></div></div>
+          <article class="panel results-panel"><div class="panel-heading"><div><h2>Test cases</h2><p id="results-count">No verification results available.</p></div><span class="panel-menu" id="results-seed">SEED —</span></div><div class="table-wrap"><table class="results-table"><thead><tr><th>TEST ID</th><th>SEED</th><th>INSTRUCTIONS</th><th>STATUS</th><th>MISMATCH</th><th>EXECUTION</th><th>ACTIONS</th></tr></thead><tbody id="results-body"><tr><td colspan="7" class="empty-cell">Run verification to see test results.</td></tr></tbody></table></div><div class="pagination"><span id="page-indicator">—</span><div><button id="prev-page" class="button button-secondary" disabled>← Previous</button><button id="next-page" class="button button-secondary" disabled>Next →</button></div></div></article>
+          <article class="panel replay-panel"><div class="panel-heading"><div><h2>Replay a test</h2><p>Regenerate an exact case from the master seed, test ID, and original generation settings.</p></div><span class="form-index">DETERMINISTIC REPLAY</span></div><form id="replay-form" class="replay-form"><label class="field"><span>Seed</span><input type="number" name="seed" min="0" required placeholder="e.g. 42"></label><label class="field"><span>Test ID</span><input type="number" name="test_id" min="1" max="10000" required placeholder="e.g. 100"></label><label class="field"><span>Min length</span><input type="number" name="min_length" min="1" max="256" value="8" required></label><label class="field"><span>Max length</span><input type="number" name="max_length" min="1" max="256" value="32" required></label><label class="field field-inline-check"><input type="checkbox" name="coverage_guided"><span>Coverage-guided</span></label><button class="button button-primary" type="submit">⟳ Replay test</button></form><div id="replay-result" class="replay-result hidden"></div></article>
+        </section>
+
+        <section class="page" id="page-instructions">
+          <div class="page-heading"><div class="eyebrow">SUPPORTED ISA PROFILE</div><h1>Instruction set</h1><p>The toolkit models these 19 instructions in its defined RV32I subset.</p></div>
+          <div class="isa-toolbar"><div class="filter-tabs" id="instruction-filters"><button class="filter-tab selected" data-category="all">All instructions <span id="isa-total">19</span></button><button class="filter-tab" data-category="R-Type">R-Type</button><button class="filter-tab" data-category="I-Type">I-Type</button><button class="filter-tab" data-category="Memory">Memory</button><button class="filter-tab" data-category="Branches">Branches</button><button class="filter-tab" data-category="Upper Immediate">Upper immediate</button><button class="filter-tab" data-category="Jumps">Jumps</button></div></div>
+          <div id="instruction-grid" class="instruction-grid"><div class="loading-card">Loading supported instructions from the API…</div></div>
+          <div class="callout"><span>i</span><p>The frontend displays the subset definition returned by the backend. It does not decode binary instruction words.</p></div>
+        </section>
+
+        <section class="page" id="page-reports">
+          <div class="page-heading"><div class="eyebrow">ARTIFACTS</div><h1>Reports</h1><p>Latest run summary and downloadable JSON generated by the verification backend.</p></div>
+          <article class="panel report-feature"><div class="report-icon">{ }</div><div class="report-copy"><span class="eyebrow">LATEST VERIFICATION REPORT</span><h2 id="report-title">No report generated yet</h2><p id="report-description">Run a verification campaign to create a report.</p><div class="report-meta" id="report-meta"></div></div><a class="button button-primary disabled" id="download-report" href="#" aria-disabled="true">↓ Download JSON</a></article>
+          <article class="panel report-json-panel"><div class="panel-heading"><div><h2>Report preview</h2><p>Machine-readable verification summary from the API</p></div><span class="panel-menu">JSON</span></div><pre id="report-preview" class="json-preview">No report data available.</pre></article>
+          <p class="muted-footnote">Reports are generated by the existing Python report writer. Run history is held in memory by this local application; report files are written under <code>reports/</code>.</p>
+        </section>
+
+        <section class="page" id="page-about">
+          <div class="page-heading"><div class="eyebrow">PROJECT NOTES</div><h1>RISC-V Processor Verification Toolkit</h1><p>A Python verification core with a web interface for running and examining differential tests.</p></div>
+          <article class="panel about-intro"><div class="eyebrow">PURPOSE-BUILT VERIFICATION</div><h2>One engine. Two ways to use it.</h2><p>The CLI and dashboard both call the same Python runner. The web layer handles requests, job status, and presentation; instruction generation, simulation, reference execution, comparison, and coverage remain in the existing verification modules.</p><div class="tech-tags"><span>Python</span><span>FastAPI</span><span>Vanilla JavaScript</span><span>RV32I subset</span><span>Seeded testing</span></div></article>
+          <div class="about-grid"><article class="panel concept-card"><span class="concept-icon">⌘</span><h3>RISC-V and ISA</h3><p>RISC-V is an open instruction-set architecture. An ISA defines the instructions and architectural behavior software can rely on. This project implements a small RV32I subset.</p></article><article class="panel concept-card"><span class="concept-icon">▹</span><h3>Simulator and oracle</h3><p>The simulator executes instructions. A separately written reference model calculates expected architectural behavior. Both begin from cloned register, PC, and memory state.</p></article><article class="panel concept-card"><span class="concept-icon">⇄</span><h3>Differential testing</h3><p>The comparator checks registers, PC, and memory after execution. A seed and one-based test ID let the same generated program be replayed.</p></article><article class="panel concept-card"><span class="concept-icon">◔</span><h3>Instruction coverage</h3><p>Mnemonic coverage counts supported instructions that actually executed at least once. It measures test exercise, not correctness or exhaustive verification.</p></article></div>
+          <article class="panel workflow-panel"><div class="panel-heading"><div><h2>Verification workflow</h2><p>Frontend requests enter the existing engine through a small API boundary.</p></div></div><div class="workflow"><div>Random generator<small>seeded programs</small></div><b>↓</b><div>Generated program</div><b>↙</b><div class="workflow-pair"><span>Simulator</span><span>Reference model</span></div><b>↘</b><div>State comparator</div><b>↓</b><div>PASS / FAIL <small>+ coverage</small></div></div></article>
+          <div class="callout"><span>!</span><p>This is an educational framework for a defined subset of RV32I. It is not a complete RISC-V implementation and does not claim exhaustive processor verification or formal verification.</p></div>
+        </section>
+      </main>
+      <footer class="footer"><span>RISC-V VERIFY <i>·</i> EDUCATIONAL RV32I SUBSET</span><span>Verification engine served locally</span></footer>
+    </div>
+  </div>
+  <dialog id="detail-dialog" class="detail-dialog"><div class="dialog-head"><div><span class="eyebrow">ARCHITECTURAL COMPARISON</span><h2 id="detail-title">Test details</h2></div><button class="icon-button" id="close-dialog" aria-label="Close details">×</button></div><div id="detail-content" class="dialog-content"></div></dialog>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+</body>
+</html>
