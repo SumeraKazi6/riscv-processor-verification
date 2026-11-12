@@ -153,9 +153,7 @@ The existing simulator and differential tests remain in place. `tests/test_api.p
 
 For a manual web workflow, start Uvicorn, open the dashboard URL, run a small campaign (for example 100 tests with seed 42), inspect coverage and a result, then replay a test using the same seed and test ID. The CLI remains useful for longer campaigns.
 
-## Screenshot
 
-_Screenshot placeholder: capture the dashboard after a local verification run._
 
 ## Limitations
 
